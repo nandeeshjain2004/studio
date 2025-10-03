@@ -32,9 +32,9 @@ export default function Home() {
               </div>
               <div className="mt-auto pt-4">
                 <Button asChild className="w-full">
-                  <Link href="/public/track-case">
+                  <a href="https://services.ecourts.gov.in/ecourtindia_v6/" target="_blank" rel="noopener noreferrer">
                     Track a Case <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  </a>
                 </Button>
               </div>
             </CardContent>

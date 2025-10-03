@@ -1,9 +1,10 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Briefcase, Clock, Users, BarChart2 } from "lucide-react";
+import { Briefcase, Clock, UserX, AlertCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useUser } from "@/context/UserContext";
+import { Gavel } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -13,29 +14,25 @@ export default function Dashboard() {
       title: "Total Pending Cases", 
       value: "~5.3 Crore", 
       icon: Briefcase,
-      description: "All Courts (Supreme, High, District)",
-      interpretation: "The overall backlog in the justice system. The majority of this pendency is in the District & Subordinate Courts."
+      description: "All Courts (District, High, Supreme)",
     },
     { 
-      title: "Case Clearance Rate (CCR)", 
-      value: ">100%", 
-      icon: BarChart2,
-      description: "Supreme Court (SC)",
-      interpretation: "The SC is disposing of more cases than are being filed, indicating high efficiency at the highest level."
+      title: "Supreme Court Pendency", 
+      value: "~88,417", 
+      icon: Gavel,
+      description: "Total backlog as of Sep 2025",
     },
     { 
-      title: "Long-Term Pendency", 
-      value: "~43 Lakh", 
-      icon: Clock,
-      description: "Cases pending over 10 years",
-      interpretation: "Highlights the 'legacy backlog' challenging the right to a speedy trial, primarily in District & Subordinate Courts."
+      title: "Judicial Vacancies (High Courts)", 
+      value: "327", 
+      icon: UserX,
+      description: "Against a strength of 1,114 (Apr 2024)",
     },
     { 
-      title: "Judicial Vacancies", 
-      value: "~5,245", 
-      icon: Users,
-      description: "District & Subordinate Judiciary",
-      interpretation: "High vacancy rates are a direct contributor to low disposal rates and increasing case pendency."
+      title: "Top Reason for Delay", 
+      value: "Counsel Not Available", 
+      icon: AlertCircle,
+      description: "Cited in over 66 Lakh cases",
     },
   ];
 

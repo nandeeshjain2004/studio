@@ -58,7 +58,12 @@ const prompt = ai.definePrompt({
   output: {schema: AutoDraftLegalDocumentOutputSchema},
   prompt: `You are an AI legal assistant that helps lawyers auto-generate legal documents.
 
-You will use the case details, document type, and regional format to generate the legal document.
+You will use the case details, document type, and regional format to generate a legally appropriate document.
+
+**Formatting Instructions:**
+- Use standard legal formatting for the specified document type and region.
+- Ensure proper spacing, indentation, and line breaks to create a professional and readable document.
+- Where specific information (like names, dates, addresses, or other details) is missing from the user's input, you MUST insert a blank line placeholder like '___________' for the user to fill in. Do not invent information.
 
 Consider relevant laws and precedents if provided.
 
@@ -68,9 +73,6 @@ Regional Format: {{{regionalFormat}}}
 Relevant Laws: {{{relevantLaws}}}
 
 Generate the legal document and provide a consistency check report.
-
-Document Text:
-Consistency Check:
 `,
 });
 

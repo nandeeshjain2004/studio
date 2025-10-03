@@ -10,7 +10,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, FileSignature } from 'lucide-react';
+import { Loader2, FileSignature, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileUploader } from '@/components/common/FileUploader';
@@ -58,6 +58,26 @@ export function DraftingForm() {
     setIsLoading(false);
   }
 
+  const handleDownload = () => {
+    if (!result) return;
+
+    const blob = new Blob([result.documentText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const docType = form.getValues('documentType').replace(/\s/g, '_');
+    link.download = `${docType}_draft.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+        title: 'Download Started',
+        description: 'Your document draft is being downloaded.',
+    });
+  }
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -92,6 +112,7 @@ export function DraftingForm() {
                       <SelectItem value="Filing">Filing</SelectItem>
                       <SelectItem value="Affidavit">Affidavit</SelectItem>
                       <SelectItem value="Petition">Petition</SelectItem>
+                      <SelectItem value="Agreement">Agreement</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -145,8 +166,12 @@ export function DraftingForm() {
 
       {result && (
         <Card className="mt-8">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Generated Document Draft</CardTitle>
+                <Button variant="outline" size="sm" onClick={handleDownload}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Draft
+                </Button>
             </CardHeader>
             <CardContent>
                 <Tabs defaultValue="draft" className="w-full">
@@ -155,7 +180,7 @@ export function DraftingForm() {
                         <TabsTrigger value="consistency">Consistency Check</TabsTrigger>
                     </TabsList>
                     <TabsContent value="draft" className="mt-4">
-                        <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm font-body">{result.documentText}</pre>
+                        <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 font-body text-sm">{result.documentText}</pre>
                     </TabsContent>
                     <TabsContent value="consistency" className="mt-4">
                         <div className="rounded-md bg-muted p-4 text-sm">{result.consistencyCheck}</div>

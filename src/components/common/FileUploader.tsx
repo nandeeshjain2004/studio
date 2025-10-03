@@ -4,6 +4,12 @@ import { Upload, File as FileIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
+import * as pdfjs from 'pdfjs-dist';
+
+// Set worker source
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+}
 
 interface FileUploaderProps {
   onFileRead: (content: string) => void;
@@ -18,27 +24,55 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleFile = useCallback((file: File) => {
+  const handleFile = useCallback(async (file: File) => {
     if (file) {
-      if (fileType === 'text' && !accept.split(',').includes(file.type) && file.type !== 'text/plain') {
+      if (!accept.split(',').map(s => s.trim()).includes(file.type)) {
          toast({ variant: 'destructive', title: 'Invalid File Type', description: `Please upload a supported file type: ${accept}` });
         return;
       }
       
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        onFileRead(content);
-        setFileName(file.name);
-      };
-      
+      setFileName(file.name);
+
       if (file.type === 'application/pdf' && fileType === 'text') {
-        reader.readAsDataURL(file); // Read as data URL for PDF processing
-      }
-      else if (fileType === 'text') {
-        reader.readAsText(file);
+        try {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const arrayBuffer = e.target?.result as ArrayBuffer;
+                if (!arrayBuffer) {
+                    toast({ variant: 'destructive', title: 'Error reading file', description: 'Could not read PDF file.' });
+                    return;
+                }
+
+                try {
+                    const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+                    let textContent = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const text = await page.getTextContent();
+                        textContent += text.items.map(item => ('str' in item ? item.str : '')).join(' ') + '\n';
+                    }
+                    onFileRead(textContent);
+                } catch (pdfError) {
+                    console.error('Error parsing PDF:', pdfError);
+                    toast({ variant: 'destructive', title: 'Error parsing PDF', description: 'Could not extract text from the PDF.' });
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error('Error handling PDF:', error);
+            toast({ variant: 'destructive', title: 'Error processing PDF', description: 'An unexpected error occurred.' });
+        }
       } else {
-        reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result as string;
+          onFileRead(content);
+        };
+        if (fileType === 'text') {
+          reader.readAsText(file);
+        } else {
+          reader.readAsDataURL(file);
+        }
       }
     }
   }, [fileType, onFileRead, toast, accept]);
@@ -77,13 +111,18 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
   }
 
   const getUploadMessage = () => {
-    if (accept.includes('pdf')) {
-        return "TXT or PDF files";
+    const acceptedTypes = accept.split(',').map(s => s.trim());
+    let message = '';
+    if (acceptedTypes.includes('application/pdf') && acceptedTypes.includes('text/plain')) {
+        message = 'TXT or PDF files';
+    } else if (acceptedTypes.includes('application/pdf')) {
+        message = 'PDF files';
+    } else if (acceptedTypes.includes('text/plain')) {
+        message = 'TXT files'
+    } else if (accept.includes('image')) {
+        message = "Images or PDF";
     }
-    if (accept.includes('image')) {
-        return "Images or PDF";
-    }
-    return "TXT files";
+    return message;
   }
 
   return (

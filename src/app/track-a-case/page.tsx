@@ -54,12 +54,12 @@ export default function TrackACasePage() {
       <div>
         <h1 className="text-3xl font-headline font-bold">eCourts Services</h1>
         <p className="mt-2 max-w-3xl text-muted-foreground">
-          Access various eCourts services directly. Clicking a service will take you to the official eCourts portal.
+          Access various eCourts services directly. Clicking a service will take you to the official eCourts portal in a new tab.
         </p>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {services.map(service => (
-          <Link href={service.url} key={service.id} className="block h-full">
+          <Link href={service.url} key={service.id} target="_blank" rel="noopener noreferrer" className="block h-full">
             <Card className="flex h-full transform flex-col transition-transform duration-300 hover:scale-105 hover:shadow-xl">
               <CardHeader className="flex-1">
                 <CardTitle className="flex items-center justify-between">

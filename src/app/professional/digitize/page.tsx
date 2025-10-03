@@ -14,7 +14,7 @@ export default function DigitizePage() {
         <CardHeader>
           <CardTitle>Digitize a Document</CardTitle>
           <CardDescription>
-            Provide the document as a data URI to start the digitization process. For a real application, this would be a file upload.
+            Upload a document (Image or PDF) to start the digitization process. The AI will extract the text.
           </CardDescription>
         </CardHeader>
         <CardContent>

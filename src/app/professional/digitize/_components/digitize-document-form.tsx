@@ -1,25 +1,27 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { digitizeLegalDocument, type DigitizeLegalDocumentOutput } from '@/ai/flows/digitize-legal-documents';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Wand2 } from 'lucide-react';
+import { Loader2, Wand2, Upload, File as FileIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
-  documentDataUri: z.string().startsWith('data:', { message: 'Must be a valid data URI.' }).min(1, 'Data URI cannot be empty.'),
+  documentDataUri: z.string().startsWith('data:', { message: 'Must be a valid data URI.' }).min(1, 'Please upload a file.'),
 });
 
 export function DigitizeDocumentForm() {
   const [result, setResult] = useState<DigitizeLegalDocumentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fileName, setFileName] = useState('');
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -27,6 +29,19 @@ export function DigitizeDocumentForm() {
       documentDataUri: '',
     },
   });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUri = e.target?.result as string;
+        form.setValue('documentDataUri', dataUri);
+        setFileName(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -39,7 +54,7 @@ export function DigitizeDocumentForm() {
       toast({
         variant: 'destructive',
         title: 'An error occurred',
-        description: 'Failed to digitize the document. Please ensure the data URI is correct and try again.',
+        description: 'Failed to digitize the document. Please try again.',
       });
     }
     setIsLoading(false);
@@ -52,21 +67,34 @@ export function DigitizeDocumentForm() {
           <FormField
             control={form.control}
             name="documentDataUri"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
-                <FormLabel>Document Data URI</FormLabel>
+                <FormLabel>Upload Document</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="data:image/png;base64,iVBORw0KGgo..."
-                    className="min-h-[120px] font-code"
-                    {...field}
-                  />
+                  <>
+                    <Input
+                      type="file"
+                      className="hidden"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept="image/*,application/pdf"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload File
+                    </Button>
+                  </>
                 </FormControl>
+                {fileName && <div className="text-sm text-muted-foreground flex items-center gap-2 pt-2"><FileIcon className="h-4 w-4" /><span>{fileName}</span></div>}
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || !form.formState.isValid}>
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

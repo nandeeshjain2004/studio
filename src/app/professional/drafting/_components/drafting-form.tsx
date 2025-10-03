@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, FileSignature, CheckCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, FileSignature, Upload, File as FileIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+
 
 const formSchema = z.object({
   caseDetails: z.string().min(50, 'Case details must be at least 50 characters.'),
@@ -24,12 +26,35 @@ const formSchema = z.object({
 export function DraftingForm() {
   const [result, setResult] = useState<AutoDraftLegalDocumentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fileName, setFileName] = useState('');
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { caseDetails: '', documentType: 'Notice', regionalFormat: 'English', relevantLaws: '' },
   });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if(file.type.startsWith('text/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target?.result as string;
+          form.setValue('caseDetails', text);
+          setFileName(file.name);
+        };
+        reader.readAsText(file);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Invalid File Type',
+          description: 'Please upload a plain text file (.txt) for case details.',
+        });
+      }
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -59,8 +84,27 @@ export function DraftingForm() {
               <FormItem>
                 <FormLabel>Case Details</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter parties, dates, facts, and other case details..." className="min-h-[150px]" {...field} />
+                  <Textarea placeholder="Enter parties, dates, facts, and other case details, or upload a text file..." className="min-h-[150px]" {...field} />
                 </FormControl>
+                 <div className="flex items-center gap-4 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload .txt File
+                  </Button>
+                  {fileName && <div className="text-sm text-muted-foreground flex items-center gap-2"><FileIcon className="h-4 w-4" /><span>{fileName}</span></div>}
+                </div>
+                 <Input
+                    type="file"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept=".txt,text/plain"
+                  />
                 <FormMessage />
               </FormItem>
             )}
@@ -156,5 +200,3 @@ export function DraftingForm() {
     </div>
   );
 }
-// Dummy import to satisfy dependencies if Tabs are not in this file
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

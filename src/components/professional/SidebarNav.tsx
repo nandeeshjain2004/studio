@@ -14,6 +14,7 @@ import {
   Bot,
   FileSignature,
   ShieldAlert,
+  Users,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -23,6 +24,7 @@ const menuItems = [
   { href: '/professional/assistant', label: 'AI Assistant', icon: Bot },
   { href: '/professional/drafting', label: 'Auto-Drafting', icon: FileSignature },
   { href: '/professional/abuse-detection', label: 'Abuse Detection', icon: ShieldAlert },
+  { href: '/professional/profiles', label: 'Profiles', icon: Users },
 ];
 
 export function SidebarNav() {
@@ -40,7 +42,7 @@ export function SidebarNav() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.href}
+                isActive={pathname.startsWith(item.href)}
                 tooltip={{ children: item.label, side: 'right', align: 'center' }}
               >
                 <Link href={item.href}>

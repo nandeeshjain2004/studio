@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -10,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User } from 'lucide-react';
-import { Logo } from './Logo';
 
 export function Header() {
   const { isMobile } = useSidebar();
@@ -30,9 +30,11 @@ export function Header() {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Judge Manan</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+          <DropdownMenuItem asChild>
+            <Link href="/professional/profiles">
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>

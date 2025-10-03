@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Gavel, Users, Briefcase, Plus } from 'lucide-react';
+import { ArrowRight, Gavel, Users, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 export default function Home() {
   return (
@@ -24,17 +23,11 @@ export default function Home() {
               <CardDescription>Track case progress, receive updates, and understand legal proceedings with a user-friendly interface.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col">
-              <div className="flex w-full items-center space-x-2">
-                <Input type="text" placeholder="Search for a case or document..." />
-                <Button variant="outline" size="icon">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
               <div className="mt-auto pt-4">
                 <Button asChild className="w-full">
-                  <a href="https://services.ecourts.gov.in/ecourtindia_v6/" target="_blank" rel="noopener noreferrer">
+                  <Link href="/track-a-case">
                     Track a Case <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </CardContent>
@@ -47,12 +40,6 @@ export default function Home() {
               <CardDescription>Access AI-powered tools for document analysis, case law suggestions, and automated drafting.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col">
-              <div className="flex w-full items-center space-x-2">
-                  <Input type="text" placeholder="Search or upload files..." />
-                  <Button variant="outline" size="icon">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-              </div>
               <div className="mt-auto pt-4">
                 <Button asChild className="w-full">
                   <Link href="/professional">

@@ -20,8 +20,8 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
 
   const handleFile = useCallback((file: File) => {
     if (file) {
-      if (fileType === 'text' && !file.type.startsWith('text/')) {
-        toast({ variant: 'destructive', title: 'Invalid File Type', description: 'Please upload a plain text file (.txt).' });
+      if (fileType === 'text' && !accept.split(',').includes(file.type) && file.type !== 'text/plain') {
+         toast({ variant: 'destructive', title: 'Invalid File Type', description: `Please upload a supported file type: ${accept}` });
         return;
       }
       
@@ -31,14 +31,17 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
         onFileRead(content);
         setFileName(file.name);
       };
-
-      if (fileType === 'text') {
+      
+      if (file.type === 'application/pdf' && fileType === 'text') {
+        reader.readAsDataURL(file); // Read as data URL for PDF processing
+      }
+      else if (fileType === 'text') {
         reader.readAsText(file);
       } else {
         reader.readAsDataURL(file);
       }
     }
-  }, [fileType, onFileRead, toast]);
+  }, [fileType, onFileRead, toast, accept]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -73,6 +76,16 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
     fileInputRef.current?.click();
   }
 
+  const getUploadMessage = () => {
+    if (accept.includes('pdf')) {
+        return "TXT or PDF files";
+    }
+    if (accept.includes('image')) {
+        return "Images or PDF";
+    }
+    return "TXT files";
+  }
+
   return (
     <div className={cn('space-y-2', className)}>
       <div
@@ -90,7 +103,7 @@ export function FileUploader({ onFileRead, fileType, accept = 'text/plain', clas
           <span className="font-semibold text-primary">Click to upload</span> or drag and drop
         </p>
         <p className="text-xs text-muted-foreground">
-          {accept === "text/plain" ? "TXT files" : "Images or PDF"}
+          {getUploadMessage()}
         </p>
         <input
           type="file"

@@ -10,7 +10,6 @@ import {
 import { Logo } from '@/components/common/Logo';
 import { Separator } from '@/components/ui/separator';
 import {
-  FileText,
   LayoutDashboard,
   Bot,
   FileSignature,
@@ -21,7 +20,6 @@ import Link from 'next/link';
 
 const menuItems = [
   { href: '/professional', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/professional/digitize', label: 'Digitize Document', icon: FileText },
   { href: '/professional/assistant', label: 'AI Assistant', icon: Bot },
   { href: '/professional/drafting', label: 'Auto-Drafting', icon: FileSignature },
   { href: '/professional/abuse-detection', label: 'Abuse Detection', icon: ShieldAlert },

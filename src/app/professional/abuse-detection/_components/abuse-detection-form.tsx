@@ -71,7 +71,7 @@ export function AbuseDetectionForm() {
                 <FormControl>
                   <Textarea placeholder="Describe the current case..." className="min-h-[120px]" {...field} />
                 </FormControl>
-                <FileUploader onFileRead={handleFileContent('caseDetails')} fileType="text" />
+                <FileUploader onFileRead={handleFileContent('caseDetails')} fileType="text" accept="text/plain,application/pdf" />
                 <FormMessage />
               </FormItem>
             )}
@@ -85,7 +85,7 @@ export function AbuseDetectionForm() {
                 <FormControl>
                   <Textarea placeholder="Provide history of legal filings, bail status..." className="min-h-[120px]" {...field} />
                 </FormControl>
-                 <FileUploader onFileRead={handleFileContent('defendantHistory')} fileType="text" />
+                 <FileUploader onFileRead={handleFileContent('defendantHistory')} fileType="text" accept="text/plain,application/pdf" />
                 <FormMessage />
               </FormItem>
             )}

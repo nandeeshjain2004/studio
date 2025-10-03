@@ -71,7 +71,7 @@ export function DraftingForm() {
                 <FormControl>
                   <Textarea placeholder="Enter parties, dates, facts, and other case details..." className="min-h-[150px]" {...field} />
                 </FormControl>
-                <FileUploader onFileRead={handleFileContent} fileType="text" />
+                <FileUploader onFileRead={handleFileContent} fileType="text" accept="text/plain,application/pdf"/>
                 <FormMessage />
               </FormItem>
             )}

@@ -68,7 +68,7 @@ export function AssistantForm() {
                 <FormControl>
                   <Textarea placeholder="Paste the full text of the legal document here..." className="min-h-[200px]" {...field} />
                 </FormControl>
-                <FileUploader onFileRead={handleFileContent} fileType="text" />
+                <FileUploader onFileRead={handleFileContent} fileType="text" accept="text/plain,application/pdf" />
                 <FormMessage />
               </FormItem>
             )}

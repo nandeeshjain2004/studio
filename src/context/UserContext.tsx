@@ -16,6 +16,7 @@ export const profiles: UserProfile[] = [
     { name: 'Judge Nandeesh', role: 'Judge', avatarSeed: 'user-nandeesh', fallback: 'JN', status: 'Active' },
     { name: 'Advocate Chaitanya', role: 'Advocate', avatarSeed: 'user-chaitanya', fallback: 'AC', status: 'Active' },
     { name: 'Advocate Saurabh', role: 'Advocate', avatarSeed: 'user-saurabh', fallback: 'AS', status: 'Active' },
+    { name: 'Advocate Rijul', role: 'Advocate', avatarSeed: 'user-rijul', fallback: 'AR', status: 'Active' },
 ];
 
 const defaultUser = profiles[0];

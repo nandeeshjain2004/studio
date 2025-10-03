@@ -34,7 +34,11 @@ export function DraftingForm() {
   });
 
   const handleFileContent = (content: string) => {
-    form.setValue('caseDetails', content);
+    form.setValue('caseDetails', content, { shouldValidate: true });
+    toast({
+        title: 'File content loaded',
+        description: `Content from the file has been loaded into the "Case Details" field.`,
+    });
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

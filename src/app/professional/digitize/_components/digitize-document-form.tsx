@@ -29,7 +29,13 @@ export function DigitizeDocumentForm() {
   });
 
   const handleFileContent = (dataUri: string) => {
-    form.setValue('documentDataUri', dataUri);
+    form.setValue('documentDataUri', dataUri, { shouldValidate: true });
+     if(dataUri) {
+        toast({
+            title: 'File selected',
+            description: 'The file is ready to be digitized.',
+        });
+    }
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

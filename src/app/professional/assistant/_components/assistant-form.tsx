@@ -31,7 +31,11 @@ export function AssistantForm() {
   });
 
   const handleFileContent = (content: string) => {
-    form.setValue('legalDocument', content);
+    form.setValue('legalDocument', content, { shouldValidate: true });
+    toast({
+        title: 'File content loaded',
+        description: `Content from the file has been loaded into the "Legal Document Text" field.`,
+    });
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

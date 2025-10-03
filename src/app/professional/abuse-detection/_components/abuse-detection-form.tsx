@@ -34,7 +34,11 @@ export function AbuseDetectionForm() {
   });
 
   const handleFileContent = (fieldName: keyof FormValues) => (content: string) => {
-    form.setValue(fieldName, content);
+    form.setValue(fieldName, content, { shouldValidate: true });
+    toast({
+        title: 'File content loaded',
+        description: `Content from the file has been loaded into the "${fieldName.replace(/([A-Z])/g, ' $1')}" field.`,
+    });
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

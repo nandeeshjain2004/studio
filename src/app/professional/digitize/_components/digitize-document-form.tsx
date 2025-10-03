@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,10 +7,10 @@ import { digitizeLegalDocument, type DigitizeLegalDocumentOutput } from '@/ai/fl
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Wand2, Upload, File as FileIcon } from 'lucide-react';
+import { Loader2, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
+import { FileUploader } from '@/components/common/FileUploader';
 
 const formSchema = z.object({
   documentDataUri: z.string().startsWith('data:', { message: 'Must be a valid data URI.' }).min(1, 'Please upload a file.'),
@@ -19,9 +19,7 @@ const formSchema = z.object({
 export function DigitizeDocumentForm() {
   const [result, setResult] = useState<DigitizeLegalDocumentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileName, setFileName] = useState('');
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -30,17 +28,8 @@ export function DigitizeDocumentForm() {
     },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUri = e.target?.result as string;
-        form.setValue('documentDataUri', dataUri);
-        setFileName(file.name);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleFileContent = (dataUri: string) => {
+    form.setValue('documentDataUri', dataUri);
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -69,27 +58,10 @@ export function DigitizeDocumentForm() {
             name="documentDataUri"
             render={() => (
               <FormItem>
-                <FormLabel>Upload Document</FormLabel>
+                <FormLabel>Document</FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      type="file"
-                      className="hidden"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      accept="image/*,application/pdf"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload File
-                    </Button>
-                  </>
+                  <FileUploader onFileRead={handleFileContent} fileType="dataUrl" accept="image/*,application/pdf" />
                 </FormControl>
-                {fileName && <div className="text-sm text-muted-foreground flex items-center gap-2 pt-2"><FileIcon className="h-4 w-4" /><span>{fileName}</span></div>}
                 <FormMessage />
               </FormItem>
             )}

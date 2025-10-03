@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,10 +10,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, FileSignature, Upload, File as FileIcon } from 'lucide-react';
+import { Loader2, FileSignature } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
+import { FileUploader } from '@/components/common/FileUploader';
 
 
 const formSchema = z.object({
@@ -26,34 +26,15 @@ const formSchema = z.object({
 export function DraftingForm() {
   const [result, setResult] = useState<AutoDraftLegalDocumentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileName, setFileName] = useState('');
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { caseDetails: '', documentType: 'Notice', regionalFormat: 'English', relevantLaws: '' },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if(file.type.startsWith('text/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const text = e.target?.result as string;
-          form.setValue('caseDetails', text);
-          setFileName(file.name);
-        };
-        reader.readAsText(file);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Invalid File Type',
-          description: 'Please upload a plain text file (.txt) for case details.',
-        });
-      }
-    }
+  const handleFileContent = (content: string) => {
+    form.setValue('caseDetails', content);
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -84,27 +65,9 @@ export function DraftingForm() {
               <FormItem>
                 <FormLabel>Case Details</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter parties, dates, facts, and other case details, or upload a text file..." className="min-h-[150px]" {...field} />
+                  <Textarea placeholder="Enter parties, dates, facts, and other case details..." className="min-h-[150px]" {...field} />
                 </FormControl>
-                 <div className="flex items-center gap-4 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload .txt File
-                  </Button>
-                  {fileName && <div className="text-sm text-muted-foreground flex items-center gap-2"><FileIcon className="h-4 w-4" /><span>{fileName}</span></div>}
-                </div>
-                 <Input
-                    type="file"
-                    className="hidden"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept=".txt,text/plain"
-                  />
+                <FileUploader onFileRead={handleFileContent} fileType="text" />
                 <FormMessage />
               </FormItem>
             )}

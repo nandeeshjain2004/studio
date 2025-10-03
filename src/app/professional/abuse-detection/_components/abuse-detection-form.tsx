@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ShieldAlert, ShieldCheck, Upload, File as FileIcon } from 'lucide-react';
+import { Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
+import { FileUploader } from '@/components/common/FileUploader';
 
 const formSchema = z.object({
   caseDetails: z.string().min(50, 'Case details must be at least 50 characters.'),
@@ -26,38 +26,16 @@ type FormValues = z.infer<typeof formSchema>;
 export function AbuseDetectionForm() {
   const [result, setResult] = useState<FlagPotentialAbuseOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileNames, setFileNames] = useState({ caseDetails: '', defendantHistory: '' });
   const { toast } = useToast();
-  
-  const caseDetailsRef = useRef<HTMLInputElement>(null);
-  const defendantHistoryRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { caseDetails: '', defendantHistory: '', relevantProvisions: '' },
   });
 
-  const handleFileChange = (fieldName: keyof FormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith('text/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const text = e.target?.result as string;
-          form.setValue(fieldName, text);
-          setFileNames(prev => ({...prev, [fieldName]: file.name }));
-        };
-        reader.readAsText(file);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Invalid File Type',
-          description: 'Please upload a plain text file (.txt).',
-        });
-      }
-    }
+  const handleFileContent = (fieldName: keyof FormValues) => (content: string) => {
+    form.setValue(fieldName, content);
   };
-
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -87,15 +65,9 @@ export function AbuseDetectionForm() {
               <FormItem>
                 <FormLabel>Current Case Details</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Describe the current case or upload a text file..." className="min-h-[120px]" {...field} />
+                  <Textarea placeholder="Describe the current case..." className="min-h-[120px]" {...field} />
                 </FormControl>
-                <div className="flex items-center gap-4 pt-2">
-                  <Button type="button" variant="outline" size="sm" onClick={() => caseDetailsRef.current?.click()}>
-                    <Upload className="mr-2 h-4 w-4" /> Upload .txt
-                  </Button>
-                  {fileNames.caseDetails && <div className="text-sm text-muted-foreground flex items-center gap-2"><FileIcon className="h-4 w-4" /><span>{fileNames.caseDetails}</span></div>}
-                </div>
-                <Input type="file" className="hidden" ref={caseDetailsRef} onChange={handleFileChange('caseDetails')} accept=".txt,text/plain" />
+                <FileUploader onFileRead={handleFileContent('caseDetails')} fileType="text" />
                 <FormMessage />
               </FormItem>
             )}
@@ -107,15 +79,9 @@ export function AbuseDetectionForm() {
               <FormItem>
                 <FormLabel>Defendant's Legal History</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Provide history of legal filings, bail status, or upload a text file..." className="min-h-[120px]" {...field} />
+                  <Textarea placeholder="Provide history of legal filings, bail status..." className="min-h-[120px]" {...field} />
                 </FormControl>
-                <div className="flex items-center gap-4 pt-2">
-                  <Button type="button" variant="outline" size="sm" onClick={() => defendantHistoryRef.current?.click()}>
-                    <Upload className="mr-2 h-4 w-4" /> Upload .txt
-                  </Button>
-                  {fileNames.defendantHistory && <div className="text-sm text-muted-foreground flex items-center gap-2"><FileIcon className="h-4 w-4" /><span>{fileNames.defendantHistory}</span></div>}
-                </div>
-                <Input type="file" className="hidden" ref={defendantHistoryRef} onChange={handleFileChange('defendantHistory')} accept=".txt,text/plain" />
+                 <FileUploader onFileRead={handleFileContent('defendantHistory')} fileType="text" />
                 <FormMessage />
               </FormItem>
             )}

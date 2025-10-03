@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Lightbulb, AlertTriangle, Upload, File as FileIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, Lightbulb, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FileUploader } from '@/components/common/FileUploader';
 
 const formSchema = z.object({
   legalDocument: z.string().min(50, 'Legal document text must be at least 50 characters.'),
@@ -22,42 +23,21 @@ const formSchema = z.object({
 export function AssistantForm() {
   const [result, setResult] = useState<SuggestRelevantCaseLawsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileName, setFileName] = useState('');
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { legalDocument: '', query: '' },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if(file.type.startsWith('text/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const text = e.target?.result as string;
-          form.setValue('legalDocument', text);
-          setFileName(file.name);
-        };
-        reader.readAsText(file);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Invalid File Type',
-          description: 'Please upload a plain text file (.txt).',
-        });
-      }
-    }
+  const handleFileContent = (content: string) => {
+    form.setValue('legalDocument', content);
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
     try {
-      // In a real scenario, if the file was a PDF/Image, we'd first digitize it.
-      // For this form, we're assuming text is provided or extracted.
       const output = await suggestRelevantCaseLaws(values);
       setResult(output);
     } catch (error) {
@@ -82,27 +62,9 @@ export function AssistantForm() {
               <FormItem>
                 <FormLabel>Legal Document Text</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Paste the full text of the legal document here, or upload a text file..." className="min-h-[200px]" {...field} />
+                  <Textarea placeholder="Paste the full text of the legal document here..." className="min-h-[200px]" {...field} />
                 </FormControl>
-                <div className="flex items-center gap-4 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload .txt File
-                  </Button>
-                  {fileName && <div className="text-sm text-muted-foreground flex items-center gap-2"><FileIcon className="h-4 w-4" /><span>{fileName}</span></div>}
-                </div>
-                 <Input
-                    type="file"
-                    className="hidden"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept=".txt,text/plain"
-                  />
+                <FileUploader onFileRead={handleFileContent} fileType="text" />
                 <FormMessage />
               </FormItem>
             )}

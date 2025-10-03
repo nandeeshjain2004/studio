@@ -1,8 +1,13 @@
+'use client';
+
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Briefcase, Clock, Users, BarChart2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useUser } from "@/context/UserContext";
 
 export default function Dashboard() {
+  const { user } = useUser();
+
   const stats = [
     { 
       title: "Total Pending Cases", 
@@ -45,7 +50,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-headline font-bold">Welcome, Judge Manan</h1>
+        <h1 className="text-3xl font-headline font-bold">Welcome, {user.name}</h1>
         <p className="text-muted-foreground mt-2">
           An overview of key judicial metrics and recent platform activity.
         </p>

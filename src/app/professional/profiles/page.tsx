@@ -1,16 +1,26 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-const profiles = [
-    { name: 'Judge Manan', role: 'Judge', avatarSeed: 'user-manan', fallback: 'JM', status: 'Active' },
-    { name: 'Judge Nandeesh', role: 'Judge', avatarSeed: 'user-nandeesh', fallback: 'JN', status: 'Active' },
-    { name: 'Advocate Chaitanya', role: 'Advocate', avatarSeed: 'user-chaitanya', fallback: 'AC', status: 'Active' },
-    { name: 'Advocate Saurabh', role: 'Advocate', avatarSeed: 'user-saurabh', fallback: 'AS', status: 'Active' },
-];
+import { useUser, type UserProfile, profiles as allProfiles } from "@/context/UserContext";
+import { useToast } from "@/hooks/use-toast";
+import { LogIn } from "lucide-react";
 
 export default function ProfilesPage() {
+    const { user: currentUser, setUser } = useUser();
+    const { toast } = useToast();
+
+    const handleLogin = (profile: UserProfile) => {
+        setUser(profile);
+        toast({
+            title: `Switched Profile`,
+            description: `You are now logged in as ${profile.name}.`,
+        });
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -23,7 +33,7 @@ export default function ProfilesPage() {
                 <CardHeader>
                     <CardTitle>Professional Users</CardTitle>
                     <CardDescription>
-                        A list of all judges and advocates with access to the professional portal.
+                        A list of all judges and advocates with access to the professional portal. Click the login button to switch to a user's profile.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -32,12 +42,13 @@ export default function ProfilesPage() {
                             <TableRow>
                                 <TableHead>User</TableHead>
                                 <TableHead>Role</TableHead>
-                                <TableHead className="text-right">Status</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {profiles.map((profile) => (
-                                <TableRow key={profile.name}>
+                            {allProfiles.map((profile) => (
+                                <TableRow key={profile.name} className={currentUser.name === profile.name ? "bg-muted/50" : ""}>
                                     <TableCell>
                                         <div className="flex items-center gap-4">
                                             <Avatar>
@@ -48,8 +59,19 @@ export default function ProfilesPage() {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-muted-foreground">{profile.role}</TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell>
                                         <Badge variant={profile.status === 'Active' ? 'default' : 'secondary'}>{profile.status}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button 
+                                            size="sm" 
+                                            variant="outline" 
+                                            onClick={() => handleLogin(profile)} 
+                                            disabled={currentUser.name === profile.name}
+                                        >
+                                            <LogIn className="mr-2 h-4 w-4" />
+                                            {currentUser.name === profile.name ? "Current" : "Login"}
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

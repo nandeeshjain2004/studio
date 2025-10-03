@@ -23,12 +23,12 @@ export function Header() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="h-9 w-9 cursor-pointer">
-            <AvatarImage src="https://picsum.photos/seed/user/40/40" data-ai-hint="person lawyer" alt="User avatar" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src="https://picsum.photos/seed/user-manan/40/40" data-ai-hint="person judge" alt="User avatar" />
+            <AvatarFallback>JM</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Judge Doe</DropdownMenuLabel>
+          <DropdownMenuLabel>Judge Manan</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />

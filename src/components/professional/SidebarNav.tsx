@@ -13,7 +13,6 @@ import {
   LayoutDashboard,
   Bot,
   FileSignature,
-  ShieldAlert,
   Users,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -23,7 +22,6 @@ const menuItems = [
   { href: '/professional', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/professional/assistant', label: 'AI Assistant', icon: Bot },
   { href: '/professional/drafting', label: 'Auto-Drafting', icon: FileSignature },
-  { href: '/professional/abuse-detection', label: 'Abuse Detection', icon: ShieldAlert },
   { href: '/professional/profiles', label: 'Profiles', icon: Users },
 ];
 

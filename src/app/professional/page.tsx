@@ -41,7 +41,6 @@ export default function Dashboard() {
 
   const recentActivities = [
     { case: "Civil Appeal No. 4821/2023", activity: "AI-drafted notice issued.", user: "Advocate Chaitanya" },
-    { case: "Writ Petition (Civil) No. 102/2024", activity: "Potential filing abuse flagged.", user: "System (AI)" },
     { case: "Criminal Appeal No. 987/2022", activity: "Relevant case laws suggested.", user: "Judge Manan" },
     { case: "SLP (Crl.) No. 543/2024", activity: "Document digitization complete.", user: "System" },
     { case: "Contempt Petition No. 212/2023", activity: "Analyzed by AI assistant.", user: "Advocate Saurabh" },

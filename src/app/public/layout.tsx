@@ -1,4 +1,4 @@
-import { Logo } from "@/components/common/Logo";
+import { Header } from '@/components/common/Header';
 
 export default function PublicLayout({
   children,
@@ -6,11 +6,9 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="flex h-20 items-center border-b px-4 md:px-8">
-        <Logo />
-      </header>
-      <main className="p-4 md:p-8">
+    <div>
+      <Header />
+      <main className="min-h-[calc(100svh-4rem)] p-4 sm:p-6 lg:p-8">
         {children}
       </main>
     </div>

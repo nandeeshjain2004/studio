@@ -1,14 +1,10 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Gavel, Users, Briefcase } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ArrowRight, Gavel, Users, Briefcase, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
-  const publicAccessImage = PlaceHolderImages.find((img) => img.id === 'public-access');
-  const professionalPortalImage = PlaceHolderImages.find((img) => img.id === 'professional-portal');
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8">
       <div className="w-full max-w-5xl text-center">
@@ -28,20 +24,15 @@ export default function Home() {
               <CardDescription>Track case progress, receive updates, and understand legal proceedings with a user-friendly interface.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col">
-              {publicAccessImage && (
-                <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-lg">
-                  <Image
-                    src={publicAccessImage.imageUrl}
-                    alt={publicAccessImage.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={publicAccessImage.imageHint}
-                  />
-                </div>
-              )}
-              <div className="mt-auto">
+              <div className="flex w-full items-center space-x-2">
+                <Input type="text" placeholder="Search for a case or document..." />
+                <Button variant="outline" size="icon">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="mt-auto pt-4">
                 <Button asChild className="w-full">
-                  <Link href="/public">
+                  <Link href="/public/track-case">
                     Track a Case <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -56,18 +47,13 @@ export default function Home() {
               <CardDescription>Access AI-powered tools for document analysis, case law suggestions, and automated drafting.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col">
-              {professionalPortalImage && (
-                <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-lg">
-                  <Image
-                    src={professionalPortalImage.imageUrl}
-                    alt={professionalPortalImage.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={professionalPortalImage.imageHint}
-                  />
-                </div>
-              )}
-              <div className="mt-auto">
+              <div className="flex w-full items-center space-x-2">
+                  <Input type="text" placeholder="Search or upload files..." />
+                  <Button variant="outline" size="icon">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+              </div>
+              <div className="mt-auto pt-4">
                 <Button asChild className="w-full">
                   <Link href="/professional">
                     Enter Portal <ArrowRight className="ml-2 h-4 w-4" />

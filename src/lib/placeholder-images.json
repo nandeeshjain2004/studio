@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "public-access",
+      "description": "A diverse group of people looking at a screen, representing public access to justice.",
+      "imageUrl": "https://images.unsplash.com/photo-1635949602587-7c970c33ffb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZW9wbGUlMjBjb3VydHxlbnwwfHx8fDE3NTk0ODM5MzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "people court"
+    },
+    {
+      "id": "professional-portal",
+      "description": "A legal professional working on a laptop in a modern office, representing the professional tools.",
+      "imageUrl": "https://images.unsplash.com/photo-1568992687947-868a62a9f521?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsYXd5ZXIlMjBvZmZpY2V8ZW58MHx8fHwxNzU5NDgzOTMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "lawyer office"
+    }
+  ]
 }
